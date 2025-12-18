@@ -1,0 +1,38 @@
+{
+  "phone_number": "233539738956",
+  "mode": "public",
+  "online_status": false,
+  "autotyping": false,
+  "allow_notifications": true,
+  "autostatusview": false,
+  "autoVerifyFiles": true,
+  "securityLevel": "maximum",
+  "notifyOnThreat": true,
+  "silentMode": true,
+  "scanEngines": [
+    "heuristic",
+    "signature",
+    "behavioral",
+    "cyscan"
+  ],
+  "maxFileSize": 52428800,
+  "allowedFileTypes": [
+    ".pdf",
+    ".jpg",
+    ".png",
+    ".mp4",
+    ".txt",
+    ".doc",
+    ".docx"
+  ],
+  "blockedFileTypes": [
+    ".exe",
+    ".bat",
+    ".cmd",
+    ".vbs",
+    ".js",
+    ".apk",
+    ".jar"
+  ],
+  "ownerJid": "233539738956@s.whatsapp.net"
+}
