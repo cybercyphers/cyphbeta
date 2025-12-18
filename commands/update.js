@@ -67,9 +67,9 @@ module.exports = {
           return;
         }
         
-        // Update only changed files
+        // Update and remove files
         await sock.sendMessage(from, { text: 'Applying update...' });
-        const updateResult = await updateChangedFiles(tempDir, result.changedFiles);
+        const updateResult = await updateChangedFiles(tempDir, result);
         
         // Delete temp folder
         await fs.remove(tempDir);
@@ -126,10 +126,11 @@ async function downloadRepo(tempDir) {
   });
 }
 
-// Smart compare - only check what's needed
+// Smart compare - check all changes including deleted files
 async function smartCompare(repoDir) {
   const currentDir = path.join(__dirname, '..');
   const changedFiles = [];
+  const deletedFiles = [];
   let packageJsonChanged = false;
   let hasChanges = false;
   
@@ -146,11 +147,14 @@ async function smartCompare(repoDir) {
       hasChanges = true;
     }
     
-    // Get list of files to check
-    const filesToCheck = await getFilesToCheck(repoDir);
+    // Get list of files in repo
+    const repoFiles = await getFilesToCheck(repoDir);
     
-    // Check each file
-    for (const relativePath of filesToCheck) {
+    // Get list of local files
+    const localFiles = await getAllLocalFiles(currentDir);
+    
+    // Check each file in repo
+    for (const relativePath of repoFiles) {
       const repoFile = path.join(repoDir, relativePath);
       const localFile = path.join(currentDir, relativePath);
       
@@ -161,13 +165,13 @@ async function smartCompare(repoDir) {
       const localExists = await fs.pathExists(localFile);
       
       if (!localExists) {
-        // New file
+        // New file in repo
         changedFiles.push(relativePath);
         hasChanges = true;
         continue;
       }
       
-      // Compare content
+      // Compare content character by character
       const result = await compareFile(repoFile, localFile);
       
       if (result.changed) {
@@ -176,9 +180,23 @@ async function smartCompare(repoDir) {
       }
     }
     
+    // Check for files that exist locally but not in repo (should be deleted)
+    for (const relativePath of localFiles) {
+      // Check if file exists in repo
+      const repoFile = path.join(repoDir, relativePath);
+      const existsInRepo = await fs.pathExists(repoFile);
+      
+      if (!existsInRepo && !isProtectedFile(relativePath)) {
+        // File exists locally but not in repo - mark for deletion
+        deletedFiles.push(relativePath);
+        hasChanges = true;
+      }
+    }
+    
     return {
       hasChanges,
       changedFiles,
+      deletedFiles,
       packageJsonChanged
     };
     
@@ -187,12 +205,13 @@ async function smartCompare(repoDir) {
     return {
       hasChanges: false,
       changedFiles: [],
+      deletedFiles: [],
       packageJsonChanged: false
     };
   }
 }
 
-// Compare two files
+// Compare two files character by character
 async function compareFile(file1, file2) {
   try {
     const content1 = await fs.readFile(file1, 'utf8');
@@ -209,7 +228,7 @@ async function compareFile(file1, file2) {
   }
 }
 
-// Get list of files to check (skip protected ones)
+// Get list of files in repo (skip protected ones)
 async function getFilesToCheck(repoDir) {
   const files = [];
   
@@ -285,13 +304,77 @@ async function getAllFilesInDir(dir) {
   return files;
 }
 
-// Update only changed files
-async function updateChangedFiles(repoDir, changedFiles) {
-  const currentDir = path.join(__dirname, '..');
-  let updated = 0;
+// Get all local files
+async function getAllLocalFiles(dir, base = '') {
+  const files = [];
   
   try {
-    for (const filePath of changedFiles) {
+    const items = await fs.readdir(dir);
+    
+    for (const item of items) {
+      // Skip protected items
+      if (item === '.git' || item === 'node_modules') {
+        continue;
+      }
+      
+      const fullPath = path.join(dir, item);
+      const relPath = base ? path.join(base, item) : item;
+      
+      try {
+        const stat = await fs.stat(fullPath);
+        
+        if (stat.isDirectory()) {
+          // Skip protected directories
+          if (item === 'auth_info' || item.startsWith('backup_')) {
+            continue;
+          }
+          
+          const subFiles = await getAllLocalFiles(fullPath, relPath);
+          files.push(...subFiles);
+        } else {
+          // Skip protected files
+          if (item === 'config.json' || item === '.env' || item.includes('session')) {
+            continue;
+          }
+          
+          files.push(relPath);
+        }
+      } catch {
+        // Skip
+      }
+    }
+  } catch {
+    // Ignore
+  }
+  
+  return files;
+}
+
+// Check if file is protected
+function isProtectedFile(filePath) {
+  const protectedFiles = [
+    'config.json',
+    '.env',
+    'auth_info',
+    'session',
+    'backup_'
+  ];
+  
+  return protectedFiles.some(protected => 
+    filePath.includes(protected) || 
+    filePath === protected
+  );
+}
+
+// Update changed files and remove deleted ones
+async function updateChangedFiles(repoDir, result) {
+  const currentDir = path.join(__dirname, '..');
+  let updated = 0;
+  let deleted = 0;
+  
+  try {
+    // Update changed files
+    for (const filePath of result.changedFiles) {
       try {
         const sourceFile = path.join(repoDir, filePath);
         const destFile = path.join(currentDir, filePath);
@@ -309,16 +392,33 @@ async function updateChangedFiles(repoDir, changedFiles) {
       }
     }
     
+    // Remove deleted files
+    for (const filePath of result.deletedFiles) {
+      try {
+        const fileToDelete = path.join(currentDir, filePath);
+        
+        if (await fs.pathExists(fileToDelete)) {
+          await fs.remove(fileToDelete);
+          deleted++;
+          console.log(`Deleted: ${filePath}`);
+        }
+      } catch (error) {
+        console.error(`Error deleting ${filePath}:`, error);
+      }
+    }
+    
     return {
       success: true,
-      updated
+      updated,
+      deleted
     };
     
   } catch (error) {
     console.error('Update error:', error);
     return {
       success: false,
-      updated: 0
+      updated: 0,
+      deleted: 0
     };
   }
 }
