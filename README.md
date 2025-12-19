@@ -10,7 +10,7 @@
 #platfroms to host click on any to hair instantly
 <table>
   <tr>
-    <td> <a href="https://bothosting.net><img src ="https://img.shields.io/badge/Discord430098?style=for-the-badge&logo=Discord&logoColor=black
+    <td> <a href="https://bothosting.net><img src ="https://img.shields.io/badge/Discord430098?style=for-thebadge&logo=Discord&logoColor=black"></a>
     </td>
   </tr>
 </table>
