@@ -23,9 +23,9 @@
 <table align="center">
   <tr>
     <td align="center">
-      <a href="https://bothosting.net">
-        <img src="https://img.shields.io/badge/Discord-430098?style=for-the-badge&logo=discord&logoColor=white">
-      </a>
+<a href="https://bot-hosting.net" target="_blank">
+  <img src="https://img.shields.io/badge/bot-hosting.net-007ec6?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgo=" alt="bot hosting">
+</a>
     </td>
   </tr>
 </table>
