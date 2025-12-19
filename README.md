@@ -33,7 +33,7 @@
       </a>
     </td>
     <td align="center">
-      <a href="https://optilinkhosting.com" target="_blank">
+      <a href="https://optiklink.com/home" target="_blank">
         <img src="https://img.shields.io/badge/OPTILINK-00b300?style=for-the-badge&logo=serverfault&logoColor=white" alt="Optilink Hosting">
       </a>
     </td>
