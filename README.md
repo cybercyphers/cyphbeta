@@ -1,2 +1,2 @@
 
-<p color:blue;>hello this is a BETA VERSION</p>
+<p align ="center" color="blue">hello this is a BETA VERSION</p>
