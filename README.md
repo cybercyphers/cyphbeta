@@ -18,7 +18,7 @@
   </a>
 </p>
 
-<p align="center"><strong>Platforms to host (click any to hire instantly)</strong></p>
+<p align="center"><strong>Platforms to host (click any and host instantly)</strong></p>
 
 <table align="center">
   <tr>
