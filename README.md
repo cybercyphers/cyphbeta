@@ -23,9 +23,19 @@
 <table align="center">
   <tr>
     <td align="center">
-<a href="https://bot-hosting.net" target="_blank">
-  <img src="https://img.shields.io/badge/bot-hosting.net-007ec6?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgo=" alt="bot hosting">
-</a>
+      <a href="https://bot-hosting.net" target="_blank">
+        <img src="https://img.shields.io/badge/bot-hosting.net-007ec6?style=for-the-badge&logo=data:image/png;base64,iVBORw0KGgo=" alt="Bot Hosting">
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://katabump.com" target="_blank">
+        <img src="https://img.shields.io/badge/KATABUMP-ff4d00?style=for-the-badge&logo=serverfault&logoColor=white" alt="Katabump">
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://optilinkhosting.com" target="_blank">
+        <img src="https://img.shields.io/badge/OPTILINK-00b300?style=for-the-badge&logo=serverfault&logoColor=white" alt="Optilink Hosting">
+      </a>
     </td>
   </tr>
 </table>
