@@ -1,4 +1,4 @@
-<p align="center" style="color: blue;">
+<p align="center" color="blue";>
   hello this is a BETA VERSION on a break 
 </p>
 
