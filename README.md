@@ -1,5 +1,5 @@
 <p align="center" style="color: blue;">
-  hello this is a BETA VERSION
+  hello this is a BETA VERSION on a break 
 </p>
 
 <p align="center">
